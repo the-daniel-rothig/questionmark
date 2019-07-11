@@ -2,8 +2,6 @@
 
 A tiny and mighty utility for optional chaining in pure JavaScript.
 
-Similar to [idx.macro](https://www.npmjs.com/package/idx.macro) but doesn't get babel involved.
-
 ```shell
 # get it 
 npm install questionmark
@@ -24,6 +22,8 @@ q(data, q => q.foo.bar.baz[0].bat[10]);
 // q works with function invocations as well:
 data.q(q => q.doSomethingGreat().result);
 ```
+
+It's similar to [idx.macro](https://www.npmjs.com/package/idx.macro) but doesn't get babel involved.
 
 ## Tests
 
@@ -80,7 +80,7 @@ This is also [proposed for JavaScript](https://github.com/tc39/proposal-optional
         .mostPopularBook?.title || "unknown"
 ```
 
-That's much better. `q.js` aims to tide us over while we wait.
+That's much better. `questionmark.js` aims to tide us over while we wait.
 
 ```javascript
     let book = json.q(q => 
