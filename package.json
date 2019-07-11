@@ -1,13 +1,10 @@
 {
   "name": "questionmark",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A tiny and mighty utility for optional chaining in pure JavaScript",
   "main": "questionmark.js",
   "directories": {
     "test": "test"
-  },
-  "dependencies": {
-    "googleapis": "^40.0.1"
   },
   "devDependencies": {
     "mocha": "^6.1.4"
