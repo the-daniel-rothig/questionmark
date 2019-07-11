@@ -1,6 +1,6 @@
 {
   "name": "questionmark",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A tiny and mighty utility for optional chaining in pure JavaScript",
   "main": "questionmark.js",
   "directories": {

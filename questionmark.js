@@ -1,32 +1,46 @@
 function q(that, selector) {
-    let functionOwner;
-    let trackingProxy = new Proxy(function dummy() {}, {
+
+    const specialGetValueKey = "$@$! ___QUESTIONMARK_SPECIAL_ESCAPE";
+    
+    const makeTrackingProxy = (data, thisRef) => new Proxy(function dummy() {}, {
         get: function(obj, prop) {
-            if (that !== null && that !== undefined) {
-                if (typeof(that[prop]) === "function") {
-                    functionOwner = that;
-                }
-                that = that[prop];
-            } else {
-                that = undefined;
+            if (prop === specialGetValueKey) {
+                return data;
             }
 
-            return trackingProxy; 
+            let nextObject = undefined;
+            let nextIsFunction = false;
+            if (data !== null && data !== undefined) {
+                if (typeof(data[prop]) === "function") {
+                    nextIsFunction = true;
+                }
+                nextObject = data[prop];
+            }
+
+            return makeTrackingProxy(nextObject, nextIsFunction ? data : nextObject); 
+        },
+
+        set: function(obj, prop, value) {
+            let nextObject = undefined;
+            if (data !== null && data !== undefined) {
+                nextObject = data[prop] = value;                
+            }
+            return makeTrackingProxy(nextObject, nextObject);
         },
 
         apply: function(obj, prop, args) {
-            if (that !== null && that !== undefined && typeof(that) === "function") {
-                that = that.apply(functionOwner || that, args);
-            } else {
-                that = undefined;
+            let nextObject = undefined;
+            if (data !== null && data !== undefined && typeof(data) === "function") {
+                nextObject = data.apply(thisRef, args);
             }
-            return trackingProxy;
+            
+            return makeTrackingProxy(nextObject, nextObject);
         }
     });
 
-    selector(trackingProxy);
+    let res = selector(makeTrackingProxy(that, that));
 
-    return that;
+    return !!res ? res[specialGetValueKey] : undefined;
 }
 
 Object.prototype.q = function qProto(selector) {

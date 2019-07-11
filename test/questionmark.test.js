@@ -18,6 +18,13 @@ const functionTestObject = {
     theFunction: function() {
         return "val = " + this.val;
     },
+
+    theHigherOrderFunction: function() {
+        return function() {
+            return "val = " + this.val;
+        }
+    },
+
     theLambda: () => "val = " + this.val,
 
     val: "objectVal"
@@ -25,6 +32,8 @@ const functionTestObject = {
 
 functionTestObject.theFunction.val = "functionVal";
 functionTestObject.theLambda.val = "lambdaVal";
+functionTestObject.theHigherOrderFunction.val = "hofVal";
+
 
 function TestConstructor() {
     this.result = "free ponies";
@@ -165,8 +174,74 @@ describe("q invoke", () => {
         assert.equal(q(functionTestObject, x => x.theLambda()), functionTestObject.theLambda());
     })
 
+    it("should assign 'this' correctly in Higher Order Functions", () => {
+        assert.equal(q(functionTestObject, x => x.theHigherOrderFunction()()), functionTestObject.theHigherOrderFunction()());
+    })
+
     it("should work with members of constructed objects", () => {
         var obj = new TestConstructor();
         assert.equal(q(obj, x => x.getResult()), obj.getResult());
     })
 })
+
+describe("q side-effects", () => {
+    it("should be able to handle side-effects", () => {
+        let myObj = {
+            page: 1,
+            totalCount: 500,
+            entries: [1,40,25,9]
+        };
+
+        let result = myObj.q(x => {
+            x.entries.push(50);
+            
+            // please don't use this library like this!
+            //
+            // because x is not the real object, but a proxy,
+            // something like x.entries[x.entries.length - 1] wouldn't work;
+            // It's "length" is a wrapper around the int that only gets escaped
+            // once the delegate terminates, and can't be used directly in calculations.
+            // 
+            // This is one of many reasons why you want to keep these methods as pure accessors.
+            return x.entries[4];
+        });
+
+        assert.equal(result, 50);
+        assert.deepEqual(myObj.entries, [1,40,25,9,50]);
+    });
+
+    it("should be able to set things", () => {
+        let myObj = {
+            page: 1
+        };
+
+        let result = myObj.q(x => {
+            // please don't use this library like this!
+            // It gets messy real quick.
+            x.page = 2;
+            return x;
+        });
+
+        assert.equal(result.page, 2);
+        assert.equal(myObj.page, 2);
+    });
+
+    it("should ignore side effects on undefined properties", () => {
+        let myObj = {};
+        let result = myObj.q(x => {
+            // please don't use this library like this!
+            // It gets messy real quick.
+            x.foo.bar.baz = "bat";
+            x.bam = "bam";
+        });
+
+        assert.equal(result, undefined);
+        assert.deepEqual(myObj, {bam: "bam"});
+    })
+
+    it("should only have a value if the lambda has a return value", () => {
+        let myObj = {};
+        let result = myObj.q(x => x.page = 2);
+        assert.equal(result, undefined);
+    })
+});
