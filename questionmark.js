@@ -1,6 +1,14 @@
 function q(that, selector) {
 
-    const specialGetValueKey = "$@$! ___QUESTIONMARK_SPECIAL_ESCAPE";
+    const specialGetValueKey = "$@$! ___QUESTIONMARK_SPECIAL_ESCAPE 27f99fbc-13e2-4f61-972c-1e291cae005a";
+        
+    function getValFromProxy(proxy) {
+        if (!proxy) {
+            return undefined;
+        }
+        return proxy[specialGetValueKey];
+    }
+    
     
     const makeTrackingProxy = (data, thisRef) => new Proxy(function dummy() {}, {
         get: function(obj, prop) {
@@ -36,9 +44,9 @@ function q(that, selector) {
         }
     });
 
-    let res = selector(makeTrackingProxy(that, that));
+    let res = selector(makeTrackingProxy(that, that), getValFromProxy);
 
-    return !!res ? res[specialGetValueKey] : undefined;
+    return getValFromProxy(res);
 }
 
 Object.prototype.q = function qProto(selector) {

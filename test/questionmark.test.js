@@ -243,4 +243,24 @@ describe("q side-effects", () => {
         let result = myObj.q(x => x.page = 2);
         assert.equal(result, undefined);
     })
+
+});
+describe("q getVal", () => {
+    it("should allow me to access raw values from proxies", () => {
+        let result = [1,2,3].q((x, getVal) => {
+            x.push(50);
+            return x[getVal(x.length)-1];
+        });
+
+        assert.equal(result, 50);
+    });
+
+    it("should not error if getVal returns undefined", () => {
+        let result = [1,2,3].q((x, getVal) => {
+            return x[getVal(x.nope) - 1];
+        })
+
+        assert.equal(result, undefined);
+
+    });
 });
