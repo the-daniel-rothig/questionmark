@@ -136,7 +136,7 @@ describe("Object.q", () => {
     it("should return undefined when accessing nonexistent function members", () => {
         function foo() {}
         assert.equal(foo.q(x => x.none.nada), undefined);
-    });    
+    });
 });
 
 describe("q invoke", () => {
@@ -228,14 +228,13 @@ describe("q side-effects", () => {
 
     it("should ignore side effects on undefined properties", () => {
         let myObj = {};
-        let result = myObj.q(x => {
+        myObj.q(x => {
             // please don't use this library like this!
             // It gets messy real quick.
             x.foo.bar.baz = "bat";
             x.bam = "bam";
         });
 
-        assert.equal(result, undefined);
         assert.deepEqual(myObj, {bam: "bam"});
     })
 

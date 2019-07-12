@@ -11,10 +11,8 @@ function q(that, selector) {
             let nextObject = undefined;
             let nextIsFunction = false;
             if (data !== null && data !== undefined) {
-                if (typeof(data[prop]) === "function") {
-                    nextIsFunction = true;
-                }
-                nextObject = data[prop];
+                nextObject = data[prop];                
+                nextIsFunction = typeof(data[prop]) === "function";
             }
 
             return makeTrackingProxy(nextObject, nextIsFunction ? data : nextObject); 
