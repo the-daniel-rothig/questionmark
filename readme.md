@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/the-daniel-rothig/questionmark.svg?branch=master)](https://travis-ci.org/the-daniel-rothig/questionmark)
+
 # questionmark.js
 
 A tiny and mighty utility for optional chaining in pure JavaScript.

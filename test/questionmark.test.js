@@ -77,7 +77,7 @@ describe("q get", () => {
     });
     
     it("should return falsey values: null", () => {
-        assert.equal(q(testObject, x => x.nil, null));
+        assert.equal(q(testObject, x => x.nil), null);
     });
     
     it("should return falsey values: false", () => {
